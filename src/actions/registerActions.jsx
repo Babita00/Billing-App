@@ -1,6 +1,8 @@
+import { actionType } from "../constants/constants";
+
 export const RegisterAction = (registerData) => {
   return {
-    type: "REGISTER",
+    type: actionType.REGISTER,
     payload: registerData,
   };
 };
