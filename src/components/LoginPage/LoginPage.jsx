@@ -5,14 +5,46 @@ import { useState } from "react";
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
+
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
-  const onclickLogin = () => {
-    navigate("/home");
+
+  const validateForm = () => {
+    let isValid = true;
+    let newErrors = { email: "", password: "" };
+
+    if (!data.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    }
+
+    if (!data.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (data.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+      isValid = false;
+    } else if (!/\d/.test(data.password) || !/[a-zA-Z]/.test(data.password)) {
+      newErrors.password = "Password must contain both letters and numbers";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
+
+  const onclickLogin = (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    if (validateForm()) {
+      navigate("/home");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-5xl relative">
@@ -29,9 +61,6 @@ const LoginPage = () => {
           {/* Login Form Section */}
           <div className="max-w-md mx-auto w-full">
             {/* Close button */}
-            <button className="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
-              <span className="text-2xl">&times;</span>
-            </button>
             <button
               onClick={() => navigate("/home")}
               className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
@@ -48,19 +77,31 @@ const LoginPage = () => {
                 <div>
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email address"
+                    value={data.email}
                     onChange={onInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
                   <input
                     type="password"
-                    onChange={onInputChange}
+                    name="password"
                     placeholder="Password"
+                    value={data.password}
+                    onChange={onInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.password}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -91,7 +132,7 @@ const LoginPage = () => {
               </form>
 
               <div className="text-center text-sm text-gray-600">
-                Dont have an account?{" "}
+                Don`t have an account?{" "}
                 <a href="#" className="text-blue-500 hover:text-blue-600">
                   Register
                 </a>
