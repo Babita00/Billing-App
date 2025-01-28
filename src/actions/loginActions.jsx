@@ -1,6 +1,6 @@
-export const LoginAction = (data) => {
-    return {
-        type: 'LOGIN',
-        payload: data
-    }   
-}
+export const LoginAction = (loginData) => {
+  return {
+    type: "LOGIN",
+    payload: loginData,
+  };
+};
