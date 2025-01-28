@@ -1,6 +1,6 @@
 import { useState } from "react";
 // import { RegisterDialog } from "../../pages/RegisterDialog";
-import { RegisterDialogue } from "../../pages/RegisterDialogue";
+import RegisterDialogue from "../../pages/RegisterDialogue";
 const HomePage = () => {
   const [showDialog, setShowDialog] = useState(false);
 
@@ -9,7 +9,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-teal-50 to-blue-50 p-6">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-teal-50 to-blue-50 p-6 relative">
       <div className="max-w-4xl flex flex-col md:flex-row items-center">
         <div className="text-center md:text-left md:mr-10">
           <p className="text-sm text-green-600">Free Forever For All Users.</p>
