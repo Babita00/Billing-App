@@ -1,5 +1,5 @@
 import { Modal } from "react-bootstrap";
-
+import PropTypes from "prop-types";
 export const RegisterDialog = (props) => {
   return (
     <Modal show={props.showD} onHide={props.onHide} keyboard={true} size="md">
@@ -87,4 +87,9 @@ export const RegisterDialog = (props) => {
       <Modal.Footer></Modal.Footer>
     </Modal>
   );
+};
+
+RegisterDialog.propTypes = {
+  showD: PropTypes.bool.isRequired,
+  onHide: PropTypes.func.isRequired,
 };
