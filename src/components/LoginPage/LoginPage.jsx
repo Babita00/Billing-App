@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const LoginPage = () => {
   const navigate = useNavigate();
   return (
@@ -60,12 +60,12 @@ const LoginPage = () => {
                       Remember me
                     </span>
                   </label>
-                  <a
-                    href="#"
+                  <Link
+                    to="#"
                     className="text-sm text-blue-500 hover:text-blue-600"
                   >
                     Forgot Password?
-                  </a>
+                  </Link>
                 </div>
 
                 <button
