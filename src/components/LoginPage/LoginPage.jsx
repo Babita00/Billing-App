@@ -1,7 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+
 const LoginPage = () => {
   const navigate = useNavigate();
+
+  const [data, setData] = useState({});
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
+  const onclickLogin = () => {
+    navigate("/home");
+  };
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-5xl relative">
@@ -38,6 +49,7 @@ const LoginPage = () => {
                   <input
                     type="email"
                     placeholder="Email address"
+                    onChange={onInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
                 </div>
@@ -45,6 +57,7 @@ const LoginPage = () => {
                 <div>
                   <input
                     type="password"
+                    onChange={onInputChange}
                     placeholder="Password"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   />
@@ -71,6 +84,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+                  onClick={onclickLogin}
                 >
                   Login
                 </button>
