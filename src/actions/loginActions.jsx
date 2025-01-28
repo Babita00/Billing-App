@@ -1,6 +1,8 @@
+import { actionType } from "../constants/constants";
+
 export const LoginAction = (loginData) => {
   return {
-    type: "LOGIN",
+    type: actionType.LOGIN,
     payload: loginData,
   };
 };
