@@ -1,14 +1,16 @@
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-5xl relative">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Illustration Section */}
           <div className="hidden md:block">
-            <img 
-              src="https://thememarch.com/demo/html/posing/assets/img/about_img_1.png" 
-              alt="Payment illustration" 
+            <img
+              src="https://thememarch.com/demo/html/posing/assets/img/about_img_1.png"
+              alt="Payment illustration"
               className="w-full h-auto max-w-md mx-auto"
             />
           </div>
@@ -17,6 +19,12 @@ const LoginPage = () => {
           <div className="max-w-md mx-auto w-full">
             {/* Close button */}
             <button className="absolute right-4 top-4 text-gray-500 hover:text-gray-700">
+              <span className="text-2xl">&times;</span>
+            </button>
+            <button
+              onClick={() => navigate("/home")}
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+            >
               <span className="text-2xl">&times;</span>
             </button>
 
@@ -44,10 +52,18 @@ const LoginPage = () => {
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-blue-600 rounded border-gray-300" />
-                    <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300"
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      Remember me
+                    </span>
                   </label>
-                  <a href="#" className="text-sm text-blue-500 hover:text-blue-600">
+                  <a
+                    href="#"
+                    className="text-sm text-blue-500 hover:text-blue-600"
+                  >
                     Forgot Password?
                   </a>
                 </div>
@@ -61,7 +77,7 @@ const LoginPage = () => {
               </form>
 
               <div className="text-center text-sm text-gray-600">
-                Dont have an account?{' '}
+                Dont have an account?{" "}
                 <a href="#" className="text-blue-500 hover:text-blue-600">
                   Register
                 </a>
