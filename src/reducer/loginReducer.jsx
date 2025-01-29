@@ -3,7 +3,8 @@ export const loginReducer = (state = {}, action) => {
     case "LOGIN":
       return {
         ...state,
-        loginData: action.payload,  // Compare this line from BillingApp/src/actions/loginActions.jsx:
+        loginData: action.payload,
+        status: false,
       };
     default:
       return state;
