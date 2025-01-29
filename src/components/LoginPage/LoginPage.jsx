@@ -1,18 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-// import { loginAction } from "../../actions/loginActions";
+import { useEffect, useState } from "react";
+import { loginAction } from "../../actions/loginActions";
 // import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 
-const LoginPage = (props) => {
+const LoginPage = () => {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
-  const {loginReducer}=useSelector((state)=>state);
+  const { status } = useSelector((state) => state.loginReducer||{});
+
+  useEffect(() => {
+    if (status === "true") {
+      navigate("/");
+    }
+  }, [status]);
 
   // const { loginAction, loginData } = props;
 
@@ -198,8 +204,6 @@ const LoginPage = (props) => {
   );
 };
 
-
-
 LoginPage.propTypes = {
   loginAction: PropTypes.func.isRequired,
   loginData: PropTypes.object,
@@ -220,4 +224,4 @@ LoginPage.propTypes = {
 // };
 
 // export default connect(mapstateToProps, mapDispatchToProps)(LoginPage);
-export default LoginPage
+export default LoginPage;
