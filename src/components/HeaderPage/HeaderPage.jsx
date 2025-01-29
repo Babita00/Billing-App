@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
       <ul className="hidden md:flex space-x-8 text-gray-800 font-medium">
         <li>
           <NavLink
-            to="/home"
+            to="/"
             className={({ isActive }) =>
               isActive ? "text-teal-500" : "hover:text-gray-500"
             }
