@@ -185,6 +185,12 @@ const LoginPage = () => {
     </div>
   );
 };
+const mapstateToProps = (state) => {
+  return {
+    // loginData:state.loginReducer
+    loginData: state.login, //key name is login from index.js of reducer
+  };
+};
 const mapDispatchToProps = (dispatch) => {
   return {
     onlogin: (data) => dispatch(loginAction(data)),
