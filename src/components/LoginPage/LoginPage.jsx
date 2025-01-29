@@ -2,11 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { loginAction } from "../../actions/loginActions";
-const LoginPage = () => {
-  const navigate = useNavigate();
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
+const LoginPage = (props) => {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+
+  const { onlogin, loginData } = props;
+
+  console.log("loginData", loginData);
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,7 +47,8 @@ const LoginPage = () => {
     e.preventDefault(); // Prevent the default form submission
 
     if (validateForm()) {
-      navigate("/home");
+      navigate("/");
+      onlogin(data);
     }
   };
 
@@ -185,16 +192,24 @@ const LoginPage = () => {
     </div>
   );
 };
+LoginPage.propTypes = {
+  onlogin: PropTypes.func.isRequired,
+  loginData: PropTypes.object,
+};
+
+//dispatch state from reducer
 const mapstateToProps = (state) => {
   return {
     // loginData:state.loginReducer
     loginData: state.login, //key name is login from index.js of reducer
   };
 };
+
+//dispatch action
 const mapDispatchToProps = (dispatch) => {
   return {
     onlogin: (data) => dispatch(loginAction(data)),
   };
 };
 
-export default LoginPage;
+export default connect(mapstateToProps, mapDispatchToProps)(LoginPage);
