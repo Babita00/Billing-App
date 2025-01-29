@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
+import { loginAction } from "../../actions/loginActions";
 const LoginPage = () => {
   const navigate = useNavigate();
 
@@ -184,6 +184,11 @@ const LoginPage = () => {
       </div>
     </div>
   );
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onlogin: (data) => dispatch(loginAction(data)),
+  };
 };
 
 export default LoginPage;
