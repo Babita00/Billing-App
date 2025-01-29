@@ -192,6 +192,8 @@ const LoginPage = (props) => {
     </div>
   );
 };
+
+
 LoginPage.propTypes = {
   onlogin: PropTypes.func.isRequired,
   loginData: PropTypes.object,
