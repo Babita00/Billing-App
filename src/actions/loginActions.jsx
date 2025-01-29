@@ -4,6 +4,7 @@ export const loginAction = (loginData) => {
 
   // for ayanc action dispatch is used 
   //put async keyword before (dispatch) 
+  
   return async (dispatch) => {
     setTimeout(() => {
       dispatch({
@@ -12,6 +13,7 @@ export const loginAction = (loginData) => {
       });
     }, 5000);
   };
+
   // setTimeout(() => {
   //   return {
   //     type: actionType.LOGIN,
