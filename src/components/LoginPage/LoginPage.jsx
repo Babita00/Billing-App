@@ -1,18 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { loginAction } from "../../actions/loginActions";
-import { connect } from "react-redux";
+// import { loginAction } from "../../actions/loginActions";
+// import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
 
 const LoginPage = (props) => {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const dispatch=useDispatch();
 
-  const { loginAction, loginData } = props;
+  const {loginReducer}=useSelector((state)=>state);
 
-  console.log("loginData", loginData);
+  // const { loginAction, loginData } = props;
+
+  // console.log("loginData", loginData);
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +52,8 @@ const LoginPage = (props) => {
 
     if (validateForm()) {
       navigate("/");
-      loginAction(data);
+      // loginAction(data);
+      dispatch(loginAction(data));
     }
   };
 
@@ -193,22 +198,26 @@ const LoginPage = (props) => {
   );
 };
 
+
+
 LoginPage.propTypes = {
   loginAction: PropTypes.func.isRequired,
   loginData: PropTypes.object,
 };
 
 //dispatch state from reducer
-const mapstateToProps = (state) => {
-  return {
-    // loginData:state.loginReducer
-    loginData: state.login, //key name is login from index.js of reducer
-  };
-};
+// const mapstateToProps = (state) => {
+//   return {
+//     // loginData:state.loginReducer
 
-//dispatch action
-const mapDispatchToProps = {
-  loginAction,
-};
+//     loginData: state.login, //key name is login from index.js of reducer
+//   };
+// };
 
-export default connect(mapstateToProps, mapDispatchToProps)(LoginPage);
+// //dispatch action
+// const mapDispatchToProps = {
+//   loginAction,
+// };
+
+// export default connect(mapstateToProps, mapDispatchToProps)(LoginPage);
+export default LoginPage
