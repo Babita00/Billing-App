@@ -62,7 +62,7 @@ const LoginPage = () => {
           <div className="max-w-md mx-auto w-full">
             {/* Close button */}
             <button
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
               className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
             >
               <span className="text-2xl">&times;</span>
