@@ -1,6 +1,6 @@
 import { actionType } from "../constants/constants";
 
-export const LoginAction = (loginData) => {
+export const loginAction = (loginData) => {
   return {
     type: actionType.LOGIN,
     payload: loginData,
