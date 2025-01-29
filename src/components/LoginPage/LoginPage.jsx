@@ -10,7 +10,7 @@ const LoginPage = (props) => {
   const [errors, setErrors] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const { onlogin, loginData } = props;
+  const { loginAction, loginData } = props;
 
   console.log("loginData", loginData);
 
@@ -48,7 +48,7 @@ const LoginPage = (props) => {
 
     if (validateForm()) {
       navigate("/");
-      onlogin(data);
+      loginAction(data);
     }
   };
 
@@ -193,9 +193,8 @@ const LoginPage = (props) => {
   );
 };
 
-
 LoginPage.propTypes = {
-  onlogin: PropTypes.func.isRequired,
+  loginAction: PropTypes.func.isRequired,
   loginData: PropTypes.object,
 };
 
@@ -208,10 +207,8 @@ const mapstateToProps = (state) => {
 };
 
 //dispatch action
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onlogin: (data) => dispatch(loginAction(data)),
-  };
+const mapDispatchToProps = {
+  loginAction,
 };
 
 export default connect(mapstateToProps, mapDispatchToProps)(LoginPage);
