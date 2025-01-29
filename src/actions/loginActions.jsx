@@ -10,7 +10,7 @@ export const loginAction = (loginData) => {
         type: actionType.LOGIN,
         payload: loginData,
       });
-    }, 2000);
+    }, 5000);
   };
   // setTimeout(() => {
   //   return {
