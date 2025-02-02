@@ -1,13 +1,66 @@
 import "./main.css";
 import { posAction } from "../actions/posActions";
 import { connect } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Main = ({ posAction, products }) => {
+  const [cartItems, setCartItems] = useState([]);
+  const [summary, setSummary] = useState({
+    subtotal: 0,
+    discount: 0,
+    grandtotal: 0,
+  });
+
   useEffect(() => {
     posAction();
   }, []);
+
   console.log(products);
+
+  const onClickProduct = (item) => {
+    console.log(item);
+    setCartItems((prevItems) => {
+      const isItemExist = prevItems.find(
+        (i) => i.product_code === item.product_code
+      );
+      if (isItemExist) {
+        //increase by 1
+        return prevItems.map((item) => {
+          return item.product_code === isItemExist.product_code
+            ? { ...item, qty: isItemExist.qty + 1 }
+            : item;
+        });
+      } else {
+        const product = { ...item, qty: 1 };
+        return [...prevItems, product];
+      }
+    });
+  };
+
+  useEffect(() => {
+    //calculate summary
+    if (cartItems.length > 0) {
+    
+      const subtotal = cartItems.reduce((acc, item) => 
+        acc + item.qty * item.product_price,0)
+        const discount = 0;
+        const grandtotal = subtotal + discount;
+        setSummary({
+          "subTotal": subtotal,
+          "discount": discount,
+          "grandtotal": grandtotal,
+        });
+    }
+  }, [cartItems]);
+
+  const resetCart=()=>{
+    setCartItems([])
+    setSummary({
+      subtotal: 0,
+      discount: 0,
+      grandtotal: 0,
+    })
+  }
 
   return (
     <>
@@ -46,15 +99,16 @@ const Main = ({ posAction, products }) => {
             <div className="right-sidebar-content">
               <div className="mid-cnt" style={{ height: "100vh" }}>
                 <div className="product-details-pos">
-                  {products &&
-                    products.map((item, main_product_id) => {
+                  {cartItems &&
+                    cartItems.map((item) => {
+                      console.log(item);
                       return (
-                        <div key={main_product_id}>
+                        <div key={item.main_product_id}>
                           <div className="calc">
                             <h6 className="limit-text">{item.name}</h6>
                             <h6>
                               <span>{item.product_price}</span>
-                              Rs. 87383
+                              {item.qty * item.product_price}
                             </h6>
                           </div>
                         </div>
@@ -66,19 +120,19 @@ const Main = ({ posAction, products }) => {
                 <div className="tot-calc-sec">
                   <div className="total-calc">
                     <h5>Sub Total</h5>
-                    <h5>Rs. 9999</h5>
+                    <h5>{summary.subtotal}</h5>
                   </div>
                   <div className="total-discount">
                     <h3>(Discount)</h3>
-                    <h4>Rs. 4546.02</h4>
+                    <h4>{summary.discount}</h4>
                   </div>
                   <div className="gnd-tot-calc">
                     <h5>Grand Total</h5>
-                    <h4>Rs. 99999</h4>
+                    <h4>{summary.grandtotal}</h4>
                   </div>
                 </div>
                 <div className="cnt-footer">
-                  <div style={{ backgroundColor: "red" }} className="b clear">
+                  <div style={{ backgroundColor: "red" }} className="b clear" onClick={resetCart}>
                     <h3>Reset Cart</h3>
                   </div>
                   <div className="b check-out">
@@ -118,7 +172,10 @@ const Main = ({ posAction, products }) => {
                   products.map((item, main_product_id) => {
                     return (
                       <li key={main_product_id} className="med-obj-pos">
-                        <div className="media-thumb-pos">
+                        <div
+                          className="media-thumb-pos"
+                          onClick={() => onClickProduct(item)}
+                        >
                           <img
                             src="https://waiwai.com.np/wp-content/uploads/2023/05/Wai-Wai-Chicken-1-1.png"
                             alt="wai wai"
