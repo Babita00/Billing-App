@@ -10,6 +10,7 @@ const Main = ({ posAction, products }) => {
     subtotal: 0,
     discount: 0,
     grandtotal: 0,
+    "note":""
   });
 
   useEffect(() => {
