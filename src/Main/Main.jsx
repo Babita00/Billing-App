@@ -3,6 +3,7 @@ import { posAction } from "../actions/posActions";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 
+// eslint-disable-next-line react/prop-types
 const Main = ({ posAction, products }) => {
   const [cartItems, setCartItems] = useState([]);
   const [summary, setSummary] = useState({
