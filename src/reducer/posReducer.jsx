@@ -1,6 +1,6 @@
 import { actionType } from "../constants/constants";
 
-const productItemsReducer = (state = {}, action) => {
+const productItemsReducer = (state = [], action) => {
   if (action.type === actionType.GET_PRODUCT_ITEMS) {
     return action.payload;
   } else {
