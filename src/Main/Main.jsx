@@ -4,12 +4,11 @@ import { connect } from "react-redux";
 import { useEffect } from "react";
 
 const Main = ({ posAction, products }) => {
-  
   useEffect(() => {
     posAction();
   }, []);
   console.log(products);
-  
+
   return (
     <>
       <div className="admin-panel layout layout-column">
@@ -47,19 +46,20 @@ const Main = ({ posAction, products }) => {
             <div className="right-sidebar-content">
               <div className="mid-cnt" style={{ height: "100vh" }}>
                 <div className="product-details-pos">
-                  {products && products.map((item,main_product_id) => {
-                    return (
-                      <div key={main_product_id}>
-                        <div className="calc">
-                          <h6 className="limit-text">{item.name}</h6>
-                          <h6>
-                            <span>{item.product_price}</span>
-                            Rs. 87383
-                          </h6>
+                  {products &&
+                    products.map((item, main_product_id) => {
+                      return (
+                        <div key={main_product_id}>
+                          <div className="calc">
+                            <h6 className="limit-text">{item.name}</h6>
+                            <h6>
+                              <span>{item.product_price}</span>
+                              Rs. 87383
+                            </h6>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
               <div className="rg-sidbr-ft">
@@ -114,21 +114,26 @@ const Main = ({ posAction, products }) => {
             </div>
             <ul className="product-list-pos">
               <div className="right-product-side">
-                {Array.from({ length: 100 }, (_, index) => {
-                  return (
-                    <li key={index} className="med-obj-pos">
-                      <div className="media-thumb-pos">
-                        <img src="" alt="" className="img-res" />
-                      </div>
-                      <div className="media-desp-pos">
-                        <div className="product-desp-pos">
-                          <h3>Wai Wai Noodles</h3>
-                          <span>Rs. 999</span>
+                {products &&
+                  products.map((item, main_product_id) => {
+                    return (
+                      <li key={main_product_id} className="med-obj-pos">
+                        <div className="media-thumb-pos">
+                          <img
+                            src="https://waiwai.com.np/wp-content/uploads/2023/05/Wai-Wai-Chicken-1-1.png"
+                            alt="wai wai"
+                            className="img-res"
+                          />
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
+                        <div className="media-desp-pos">
+                          <div className="product-desp-pos">
+                            <h3>{item.name}</h3>
+                            <span>{item.product_price}</span>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
               </div>
             </ul>
           </div>
