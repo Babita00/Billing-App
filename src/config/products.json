@@ -45,7 +45,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 20,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -83,7 +83,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 30,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -121,7 +121,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 40,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -159,7 +159,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 50,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -197,7 +197,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 60,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -235,7 +235,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 70,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -273,7 +273,7 @@
       "product_category_id": 4,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 80,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -311,7 +311,7 @@
       "product_category_id": 4,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 90,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
@@ -349,7 +349,7 @@
       "product_category_id": 1,
       "brand_id": 6,
       "product_cost": 0,
-      "product_price": 0,
+      "product_price": 100,
       "product_unit_id": 1,
       "product_unit_name": "Bottle",
       "product_unit": {
