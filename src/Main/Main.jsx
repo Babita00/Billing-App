@@ -47,13 +47,13 @@ const Main = ({ posAction, products }) => {
             <div className="right-sidebar-content">
               <div className="mid-cnt" style={{ height: "100vh" }}>
                 <div className="product-details-pos">
-                  {Array.from({ length: 10 }).map((_, index) => {
+                  {products && products.map((item,main_product_id) => {
                     return (
-                      <div key={index}>
+                      <div key={main_product_id}>
                         <div className="calc">
-                          <h6 className="limit-text">12 × Wai Wai</h6>
+                          <h6 className="limit-text">{item.name}</h6>
                           <h6>
-                            <span>Rs. 999</span>
+                            <span>{item.product_price}</span>
                             Rs. 87383
                           </h6>
                         </div>
