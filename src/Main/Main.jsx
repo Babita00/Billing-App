@@ -1,6 +1,15 @@
 import "./main.css";
+import { posAction } from "../actions/posActions";
+import { connect } from "react-redux";
+import { useEffect } from "react";
 
-const Main = () => {
+const Main = ({ posAction, products }) => {
+  
+  useEffect(() => {
+    posAction();
+  }, []);
+  console.log(products);
+  
   return (
     <>
       <div className="admin-panel layout layout-column">
@@ -129,4 +138,11 @@ const Main = () => {
   );
 };
 
-export default Main;
+const mapStateToprops = (state) => {
+  return {
+    products: state.products,
+  };
+};
+const mapDispatchToProps = { posAction };
+
+export default connect(mapStateToprops, mapDispatchToProps)(Main);
