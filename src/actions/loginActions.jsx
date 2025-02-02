@@ -11,10 +11,10 @@ export const loginAction = (loginData) => {
         type: actionType.LOGIN,
         payload: loginData,
       });
-      dispatch({
-        type: actionType.REGISTER,
-        payload: loginData,
-      });
+      // dispatch({
+      //   type: actionType.REGISTER,
+      //   payload: loginData,
+      // });
     }, 5000);
   };
 
