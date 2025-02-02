@@ -46,7 +46,7 @@ const Main = ({ posAction, products }) => {
         const discount = 0;
         const grandtotal = subtotal + discount;
         setSummary({
-          "subTotal": subtotal,
+          "subtotal": subtotal,
           "discount": discount,
           "grandtotal": grandtotal,
         });
