@@ -1,4 +1,3 @@
-import "antd/dist/antd.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
