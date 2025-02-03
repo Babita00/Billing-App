@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
 import { format } from "date-fns";
+import CartItem from "./CartItem";
+import { DEFAULT_PRODUCT_IMAGE } from "../constants/constants";
+import { STORE_NAME } from "../constants/constants";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -16,23 +18,30 @@ import {
   Input,
   Button,
   Card,
-  Badge,
   Divider,
   Space,
   Typography,
-  Avatar,
   Empty,
   message,
+  Modal,
+  Form,
+  Radio,
+  InputNumber,
 } from "antd";
 
 const { Title, Text } = Typography;
 
+// Main Component
 const Main = () => {
   const [cartItems, setCartItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDiscountModalVisible, setIsDiscountModalVisible] = useState(false);
+  const [discountForm] = Form.useForm();
   const [summary, setSummary] = useState({
     subtotal: 0,
     discount: 0,
+    discountType: "fixed",
+    discountAmount: 0,
     grandtotal: 0,
     note: "",
   });
@@ -46,15 +55,53 @@ const Main = () => {
 
   useEffect(() => {
     if (cartItems.length > 0) {
-      const subtotal = cartItems.reduce(
-        (acc, item) => acc + item.qty * item.product_price,
-        0
-      );
-      const discount = 0;
-      const grandtotal = subtotal - discount;
-      setSummary({ subtotal, discount, grandtotal, note: "" });
+      calculateSummary();
     }
-  }, [cartItems]);
+  }, []);
+
+  const calculateSummary = (
+    discountType = summary.discountType,
+    discountAmount = summary.discountAmount
+  ) => {
+    const subtotal = cartItems.reduce(
+      (acc, item) => acc + item.qty * item.product_price,
+      0
+    );
+
+    let discount = 0;
+    if (discountType === "percentage") {
+      discount = (subtotal * discountAmount) / 100;
+    } else {
+      discount = discountAmount;
+    }
+
+    discount = Math.min(discount, subtotal);
+
+    const grandtotal = subtotal - discount;
+    setSummary({
+      ...summary,
+      subtotal,
+      discount,
+      discountType,
+      discountAmount,
+      grandtotal,
+    });
+  };
+
+  const handleDiscountSubmit = (values) => {
+    const { discountType, discountAmount } = values;
+    calculateSummary(discountType, discountAmount);
+    setIsDiscountModalVisible(false);
+    message.success("Discount applied successfully");
+  };
+
+  const showDiscountModal = () => {
+    discountForm.setFieldsValue({
+      discountType: summary.discountType,
+      discountAmount: summary.discountAmount,
+    });
+    setIsDiscountModalVisible(true);
+  };
 
   const onClickProduct = (item) => {
     setCartItems((prevItems) => {
@@ -85,6 +132,8 @@ const Main = () => {
     setSummary({
       subtotal: 0,
       discount: 0,
+      discountType: "fixed",
+      discountAmount: 0,
       grandtotal: 0,
       note: "",
     });
@@ -95,31 +144,69 @@ const Main = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const CartItem = ({ item }) => (
-    <div className="flex justify-between items-center py-2">
-      <div className="flex items-center space-x-2">
-        <Badge count={item.qty} className="bg-blue-500">
-          <Avatar shape="square" size="large" src="/api/placeholder/48/48" />
-        </Badge>
-        <div>
-          <Text className="font-medium">{item.name}</Text>
-          <Text className="block text-gray-500 text-sm">
-            ${item.product_price} × {item.qty}
-          </Text>
-        </div>
-      </div>
-      <div className="flex items-center">
-        <Text className="font-medium mr-4">
-          ${(item.qty * item.product_price).toFixed(2)}
-        </Text>
-        <Button
-          type="text"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => removeFromCart(item.product_code)}
-        />
-      </div>
-    </div>
+
+
+  const DiscountModal = () => (
+    <Modal
+      title="Apply Discount"
+      open={isDiscountModalVisible}
+      onCancel={() => setIsDiscountModalVisible(false)}
+      footer={null}
+    >
+      <Form
+        form={discountForm}
+        onFinish={handleDiscountSubmit}
+        initialValues={{
+          discountType: "fixed",
+          discountAmount: 0,
+        }}
+        layout="vertical"
+      >
+        <Form.Item name="discountType" label="Discount Type">
+          <Radio.Group>
+            <Radio value="fixed">Fixed Amount ($)</Radio>
+            <Radio value="percentage">Percentage (%)</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        <Form.Item
+          name="discountAmount"
+          label="Discount Amount"
+          rules={[
+            { required: true, message: "Please enter discount amount" },
+            { type: "number", min: 0, message: "Amount must be positive" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (
+                  getFieldValue("discountType") === "percentage" &&
+                  value > 100
+                ) {
+                  return Promise.reject("Percentage cannot exceed 100%");
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
+          <InputNumber
+            style={{ width: "100%" }}
+            placeholder="Enter discount amount"
+            precision={2}
+          />
+        </Form.Item>
+
+        <Form.Item className="flex justify-end mb-0">
+          <Space>
+            <Button onClick={() => setIsDiscountModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Apply Discount
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 
   return (
@@ -130,7 +217,7 @@ const Main = () => {
           <Card className="sticky top-4">
             <div className="mb-4">
               <Title level={4} className="text-center mb-1">
-                NEPKODER STORE
+                {STORE_NAME}
               </Title>
               <Text className="block text-center text-gray-500">
                 {format(new Date(), "yyyy-MM-dd hh:mm a")}
@@ -144,39 +231,31 @@ const Main = () => {
               <Button icon={<FileTextOutlined />} block>
                 Note
               </Button>
-              <Button icon={<PercentageOutlined />} block>
+              <Button
+                icon={<PercentageOutlined />}
+                block
+                onClick={showDiscountModal}
+              >
                 Discount
               </Button>
             </div>
-
-            <Divider />
 
             <div className="h-96 overflow-y-auto mb-4">
               {cartItems.length === 0 ? (
                 <Empty description="Cart is empty" />
               ) : (
                 cartItems.map((item) => (
-                  <CartItem key={item.product_code} item={item} />
+                  <CartItem
+                    key={item.product_code}
+                    item={item}
+                    onRemove={removeFromCart}
+                  />
                 ))
               )}
             </div>
 
             <Divider />
-
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between">
-                <Text>Subtotal</Text>
-                <Text>${summary.subtotal.toFixed(2)}</Text>
-              </div>
-              <div className="flex justify-between text-gray-500">
-                <Text>Discount</Text>
-                <Text>-${summary.discount.toFixed(2)}</Text>
-              </div>
-              <div className="flex justify-between font-bold">
-                <Text>Grand Total</Text>
-                <Text>${summary.grandtotal.toFixed(2)}</Text>
-              </div>
-            </div>
+            <CartSummary />
 
             <Space className="w-full">
               <Button
@@ -222,7 +301,7 @@ const Main = () => {
                 cover={
                   <img
                     alt={product.name}
-                    src="https://waiwai.com.np/wp-content/uploads/2023/05/Wai-Wai-Chicken-1-1.png"
+                    src={product.image || DEFAULT_PRODUCT_IMAGE}
                     className="object-cover h-48"
                   />
                 }
@@ -237,18 +316,11 @@ const Main = () => {
             ))}
           </div>
         </div>
+
+        <DiscountModal />
       </div>
     </div>
   );
 };
 
 export default Main;
-
-Main.propTypes = {
-  item: PropTypes.shape({
-    product_code: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    product_price: PropTypes.number.isRequired,
-    qty: PropTypes.number.isRequired,
-  }).isRequired,
-};
