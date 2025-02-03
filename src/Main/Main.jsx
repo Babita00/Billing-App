@@ -294,7 +294,7 @@ const Main = () => {
                 placeholder="Search products..."
                 prefix={<SearchOutlined />}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-md"
+                className="max-w-md "
               />
               <Space>
                 <Text>User: Sujan</Text>
