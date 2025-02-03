@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
 import { format } from "date-fns";
 import CartItem from "./CartItem";
-import { DEFAULT_PRODUCT_IMAGE } from "../constants/constants";
-import { STORE_NAME } from "../constants/constants";
+import CartSummary from "./CartSummary";
+import { DEFAULT_PRODUCT_IMAGE, STORE_NAME } from "../constants/constants";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -31,7 +31,6 @@ import {
 
 const { Title, Text } = Typography;
 
-// Main Component
 const Main = () => {
   const [cartItems, setCartItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,8 +55,18 @@ const Main = () => {
   useEffect(() => {
     if (cartItems.length > 0) {
       calculateSummary();
+    } else {
+      // Reset summary when cart is empty
+      setSummary({
+        subtotal: 0,
+        discount: 0,
+        discountType: "fixed",
+        discountAmount: 0,
+        grandtotal: 0,
+        note: "",
+      });
     }
-  }, []);
+  }, [cartItems]); // Updated dependency array to include cartItems
 
   const calculateSummary = (
     discountType = summary.discountType,
@@ -143,8 +152,6 @@ const Main = () => {
   const filteredProducts = products?.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-
 
   const DiscountModal = () => (
     <Modal
@@ -255,7 +262,7 @@ const Main = () => {
             </div>
 
             <Divider />
-            <CartSummary />
+            <CartSummary summary={summary} />
 
             <Space className="w-full">
               <Button
