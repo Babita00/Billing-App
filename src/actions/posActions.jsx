@@ -10,5 +10,17 @@ export const posAction = () => {
       type: actionType.GET_PRODUCT_ITEMS,
       payload: products,
     });
+   
   };
 };
+
+// export const summaryCalculation = (products) => {
+//   return async (dispatch) => {
+//     dispatch({
+
+//         //api call
+//       type: 'SUMMARY',
+//       payload: products,
+//     });
+//   };
+// };
