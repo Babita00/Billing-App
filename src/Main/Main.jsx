@@ -1,212 +1,245 @@
-import "./main.css";
-import { posAction } from "../actions/posActions";
-import { connect } from "react-redux";
+import "antd/dist/antd.css";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { posAction } from "../actions/posActions";
+import { format } from "date-fns";
+import {
+  ShoppingCartOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  SearchOutlined,
+  FileTextOutlined,
+  PercentageOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import {
+  Input,
+  Button,
+  Card,
+  Badge,
+  Divider,
+  Space,
+  Typography,
+  Avatar,
+  Empty,
+  message,
+} from "antd";
 
-// eslint-disable-next-line react/prop-types
-const Main = ({ posAction, products }) => {
+const { Title, Text } = Typography;
+
+const Main = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [summary, setSummary] = useState({
     subtotal: 0,
     discount: 0,
     grandtotal: 0,
-    "note":""
+    note: "",
   });
 
-  useEffect(() => {
-    posAction();
-  }, []);
-
-  console.log(products);
-
-  const onClickProduct = (item) => {
-    console.log(item);
-    setCartItems((prevItems) => {
-      const isItemExist = prevItems.find(
-        (i) => i.product_code === item.product_code
-      );
-      if (isItemExist) {
-        //increase by 1
-        return prevItems.map((item) => {
-          return item.product_code === isItemExist.product_code
-            ? { ...item, qty: isItemExist.qty + 1 }
-            : item;
-        });
-      } else {
-        const product = { ...item, qty: 1 };
-        return [...prevItems, product];
-      }
-    });
-  };
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products);
 
   useEffect(() => {
-    //calculate summary
+    dispatch(posAction());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (cartItems.length > 0) {
-    
-      const subtotal = cartItems.reduce((acc, item) => 
-        acc + item.qty * item.product_price,0)
-        const discount = 0;
-        const grandtotal = subtotal + discount;
-        setSummary({
-          "subtotal": subtotal,
-          "discount": discount,
-          "grandtotal": grandtotal,
-        });
+      const subtotal = cartItems.reduce(
+        (acc, item) => acc + item.qty * item.product_price,
+        0
+      );
+      const discount = 0;
+      const grandtotal = subtotal - discount;
+      setSummary({ subtotal, discount, grandtotal, note: "" });
     }
   }, [cartItems]);
 
-  const resetCart=()=>{
-    setCartItems([])
+  const onClickProduct = (item) => {
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(
+        (i) => i.product_code === item.product_code
+      );
+      if (existingItem) {
+        return prevItems.map((cartItem) =>
+          cartItem.product_code === item.product_code
+            ? { ...cartItem, qty: cartItem.qty + 1 }
+            : cartItem
+        );
+      }
+      return [...prevItems, { ...item, qty: 1 }];
+    });
+    message.success("Product added to cart");
+  };
+
+  const removeFromCart = (productCode) => {
+    setCartItems((prev) =>
+      prev.filter((item) => item.product_code !== productCode)
+    );
+    message.success("Product removed from cart");
+  };
+
+  const resetCart = () => {
+    setCartItems([]);
     setSummary({
       subtotal: 0,
       discount: 0,
       grandtotal: 0,
-    })
-  }
+      note: "",
+    });
+    message.info("Cart has been reset");
+  };
+
+  const filteredProducts = products?.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const CartItem = ({ item }) => (
+    <div className="flex justify-between items-center py-2">
+      <div className="flex items-center space-x-2">
+        <Badge count={item.qty} className="bg-blue-500">
+          <Avatar shape="square" size="large" src="/api/placeholder/48/48" />
+        </Badge>
+        <div>
+          <Text className="font-medium">{item.name}</Text>
+          <Text className="block text-gray-500 text-sm">
+            ${item.product_price} × {item.qty}
+          </Text>
+        </div>
+      </div>
+      <div className="flex items-center">
+        <Text className="font-medium mr-4">
+          ${(item.qty * item.product_price).toFixed(2)}
+        </Text>
+        <Button
+          type="text"
+          danger
+          icon={<DeleteOutlined />}
+          onClick={() => removeFromCart(item.product_code)}
+        />
+      </div>
+    </div>
+  );
 
   return (
-    <>
-      <div className="admin-panel layout layout-column">
-        <div className="fx-tst">
-          <div className="cus-card-pos">
-            <div className="rg-sidbr-tp">
-              <div className="top-section">
-                <div className="order top">
-                  <h8>NEPKODER STORE</h8>
-                </div>
-                <div className="top separator"></div>
-                <div className="datetime top">
-                  <h8>2025-01-01 11:22 AM</h8>
-                </div>
+    <div className="min-h-screen bg-gray-100">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
+        {/* Cart Section */}
+        <div className="lg:col-span-1">
+          <Card className="sticky top-4">
+            <div className="mb-4">
+              <Title level={4} className="text-center mb-1">
+                NEPKODER STORE
+              </Title>
+              <Text className="block text-center text-gray-500">
+                {format(new Date(), "yyyy-MM-dd hh:mm a")}
+              </Text>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <Button icon={<UserOutlined />} block>
+                Customer
+              </Button>
+              <Button icon={<FileTextOutlined />} block>
+                Note
+              </Button>
+              <Button icon={<PercentageOutlined />} block>
+                Discount
+              </Button>
+            </div>
+
+            <Divider />
+
+            <div className="h-96 overflow-y-auto mb-4">
+              {cartItems.length === 0 ? (
+                <Empty description="Cart is empty" />
+              ) : (
+                cartItems.map((item) => (
+                  <CartItem key={item.product_code} item={item} />
+                ))
+              )}
+            </div>
+
+            <Divider />
+
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between">
+                <Text>Subtotal</Text>
+                <Text>${summary.subtotal.toFixed(2)}</Text>
               </div>
-              <div className="low-sec">
-                <div className="cnt">
-                  <div
-                    className="a add-customer"
-                    style={{ borderLeft: "unset" }}
-                  >
-                    Walk-In Customer
-                  </div>
-                  <div className="a add-customer">Add a Note</div>
-                  <div
-                    className="a add-customer"
-                    style={{ borderRight: "unset" }}
-                  >
-                    Bill Discount
-                  </div>
-                </div>
+              <div className="flex justify-between text-gray-500">
+                <Text>Discount</Text>
+                <Text>-${summary.discount.toFixed(2)}</Text>
+              </div>
+              <div className="flex justify-between font-bold">
+                <Text>Grand Total</Text>
+                <Text>${summary.grandtotal.toFixed(2)}</Text>
               </div>
             </div>
 
-            <div className="right-sidebar-content">
-              <div className="mid-cnt" style={{ height: "100vh" }}>
-                <div className="product-details-pos">
-                  {cartItems &&
-                    cartItems.map((item) => {
-                      console.log(item);
-                      return (
-                        <div key={item.main_product_id}>
-                          <div className="calc">
-                            <h6 className="limit-text">{item.name}</h6>
-                            <h6>
-                              <span>{item.product_price}</span>
-                              {item.qty * item.product_price}
-                            </h6>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-              <div className="rg-sidbr-ft">
-                <div className="tot-calc-sec">
-                  <div className="total-calc">
-                    <h5>Sub Total</h5>
-                    <h5>{summary.subtotal}</h5>
-                  </div>
-                  <div className="total-discount">
-                    <h3>(Discount)</h3>
-                    <h4>{summary.discount}</h4>
-                  </div>
-                  <div className="gnd-tot-calc">
-                    <h5>Grand Total</h5>
-                    <h4>{summary.grandtotal}</h4>
-                  </div>
-                </div>
-                <div className="cnt-footer">
-                  <div style={{ backgroundColor: "red" }} className="b clear" onClick={resetCart}>
-                    <h3>Reset Cart</h3>
-                  </div>
-                  <div className="b check-out">
-                    <h3>Pay Now</h3>
-                  </div>
-                </div>
-              </div>
+            <Space className="w-full">
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={resetCart}
+                block
+              >
+                Reset Cart
+              </Button>
+              <Button type="primary" icon={<ShoppingCartOutlined />} block>
+                Pay Now
+              </Button>
+            </Space>
+          </Card>
+        </div>
+
+        {/* Products Section */}
+        <div className="lg:col-span-3">
+          <Card className="mb-4">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <Title level={5} className="mb-0">
+                All Products
+              </Title>
+              <Input
+                placeholder="Search products..."
+                prefix={<SearchOutlined />}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-md"
+              />
+              <Space>
+                <Text>User: Sujan</Text>
+                <Button icon={<LogoutOutlined />}>Logout</Button>
+              </Space>
             </div>
-          </div>
-          <div className="product-list-section">
-            <div className="rg-pdt-sea-pos">
-              <div className="cat-toggle">
-                <p>All Products</p>
-              </div>
-              <div className="search-form">
-                <input
-                  type="text"
-                  name="search"
-                  placeholder="Search for Product"
-                  autoComplete="off"
-                  className="search"
+          </Card>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredProducts?.map((product) => (
+              <Card
+                key={product.product_code}
+                hoverable
+                cover={
+                  <img
+                    alt={product.name}
+                    src="/api/placeholder/200/200"
+                    className="object-cover h-48"
+                  />
+                }
+                onClick={() => onClickProduct(product)}
+                className="cursor-pointer"
+              >
+                <Card.Meta
+                  title={product.name}
+                  description={`$${product.product_price}`}
                 />
-                <button type="submit" className="btn btn-transparent">
-                  <i className="icon dosearch" />
-                </button>
-              </div>
-              <div className="his-nw">
-                <p>User: Sujan</p>
-              </div>
-              <div className="his-nw logout">
-                <p>Logout</p>
-              </div>
-            </div>
-            <ul className="product-list-pos">
-              <div className="right-product-side">
-                {products &&
-                  products.map((item, main_product_id) => {
-                    return (
-                      <li key={main_product_id} className="med-obj-pos">
-                        <div
-                          className="media-thumb-pos"
-                          onClick={() => onClickProduct(item)}
-                        >
-                          <img
-                            src="https://waiwai.com.np/wp-content/uploads/2023/05/Wai-Wai-Chicken-1-1.png"
-                            alt="wai wai"
-                            className="img-res"
-                          />
-                        </div>
-                        <div className="media-desp-pos">
-                          <div className="product-desp-pos">
-                            <h3>{item.name}</h3>
-                            <span>{item.product_price}</span>
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-              </div>
-            </ul>
+              </Card>
+            ))}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-const mapStateToprops = (state) => {
-  return {
-    products: state.products,
-  };
-};
-const mapDispatchToProps = { posAction };
-
-export default connect(mapStateToprops, mapDispatchToProps)(Main);
+export default Main;
