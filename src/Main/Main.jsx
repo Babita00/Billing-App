@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
 import { format } from "date-fns";
@@ -52,6 +52,38 @@ const Main = () => {
     dispatch(posAction());
   }, [dispatch]);
 
+  const calculateSummary = useCallback(
+    (
+      discountType = summary.discountType,
+      discountAmount = summary.discountAmount
+    ) => {
+      const subtotal = cartItems.reduce(
+        (acc, item) => acc + item.qty * item.product_price,
+        0
+      );
+
+      let discount = 0;
+      if (discountType === "percentage") {
+        discount = (subtotal * discountAmount) / 100;
+      } else {
+        discount = discountAmount;
+      }
+
+      discount = Math.min(discount, subtotal);
+
+      const grandtotal = subtotal - discount;
+      setSummary({
+        ...summary,
+        subtotal,
+        discount,
+        discountType,
+        discountAmount,
+        grandtotal,
+      });
+    },
+    [cartItems, summary]
+  );
+
   useEffect(() => {
     if (cartItems.length > 0) {
       calculateSummary();
@@ -66,37 +98,14 @@ const Main = () => {
         note: "",
       });
     }
-  }, [cartItems, calculateSummary]); // Updated dependency array to include cartItems
+  }, [cartItems, calculateSummary]); // Updated dependency array to include cartItems and calculateSummary
 
-  const calculateSummary = useCallback(
-    (
-      discountType = summary.discountType,
-      discountAmount = summary.discountAmount
-    ) => {
-      const subtotal = cartItems.reduce(
-        (acc, item) => acc + item.qty * item.product_price,
-        0
-      );
-
-      let discount =
-        discountType === "percentage"
-          ? (subtotal * discountAmount) / 100
-          : discountAmount;
-
-      discount = Math.min(discount, subtotal);
-      const grandtotal = subtotal - discount;
-
-      setSummary((prevSummary) => ({
-        ...prevSummary,
-        subtotal,
-        discount,
-        discountType,
-        discountAmount,
-        grandtotal,
-      }));
-    },
-    [cartItems, summary.discountType, summary.discountAmount]
-  );
+  const handleDiscountSubmit = (values) => {
+    const { discountType, discountAmount } = values;
+    calculateSummary(discountType, discountAmount);
+    setIsDiscountModalVisible(false);
+    message.success("Discount applied successfully");
+  };
 
   const showDiscountModal = () => {
     discountForm.setFieldsValue({
