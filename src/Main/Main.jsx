@@ -221,7 +221,7 @@ const Main = () => {
                 cover={
                   <img
                     alt={product.name}
-                    src="/api/placeholder/200/200"
+                    src="https://waiwai.com.np/wp-content/uploads/2023/05/Wai-Wai-Chicken-1-1.png"
                     className="object-cover h-48"
                   />
                 }
