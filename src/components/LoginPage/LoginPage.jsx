@@ -18,7 +18,7 @@ const LoginPage = () => {
     if (status === "true") {
       navigate("/");
     }
-  }, [status]);
+  }, [status, navigate]);
 
   // const { loginAction, loginData } = props;
 
