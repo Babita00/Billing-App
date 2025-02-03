@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
 import { format } from "date-fns";
@@ -242,3 +243,12 @@ const Main = () => {
 };
 
 export default Main;
+
+Main.propTypes = {
+  item: PropTypes.shape({
+    product_code: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    product_price: PropTypes.number.isRequired,
+    qty: PropTypes.number.isRequired,
+  }).isRequired,
+};
