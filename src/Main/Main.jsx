@@ -262,6 +262,8 @@ const Main = () => {
         <DiscountModal
           isDiscountModalVisible={isDiscountModalVisible}
           handleDiscountSubmit={handleDiscountSubmit}
+          discountForm={discountForm}
+          onCancel={() => setIsDiscountModalVisible(false)}
         />
       </div>
     </div>
