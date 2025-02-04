@@ -1,12 +1,16 @@
 import { Button, Space, Modal, Form, Radio, InputNumber } from "antd";
-
-const DiscountModal = (props) => {
-  const { isDiscountModalVisible, handleDiscountSubmit, discountForm } = props;
+import PropTypes from "prop-types";
+const DiscountModal = ({
+  isDiscountModalVisible,
+  handleDiscountSubmit,
+  discountForm,
+  onCancel,
+}) => {
   return (
     <Modal
       title="Apply Discount"
       open={isDiscountModalVisible}
-      onCancel={() => setIsDiscountModalVisible(false)}
+      onCancel={onCancel}
       footer={null}
     >
       <Form
@@ -53,9 +57,7 @@ const DiscountModal = (props) => {
 
         <Form.Item className="flex justify-end mb-0">
           <Space>
-            <Button onClick={() => setIsDiscountModalVisible(false)}>
-              Cancel
-            </Button>
+            <Button onClick={onCancel}>Cancel</Button>
             <Button type="primary" htmlType="submit">
               Apply Discount
             </Button>
@@ -64,6 +66,14 @@ const DiscountModal = (props) => {
       </Form>
     </Modal>
   );
+};
+
+// Define PropTypes
+DiscountModal.propTypes = {
+  isDiscountModalVisible: PropTypes.bool.isRequired,
+  handleDiscountSubmit: PropTypes.func.isRequired,
+  discountForm: PropTypes.object.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export default DiscountModal;
