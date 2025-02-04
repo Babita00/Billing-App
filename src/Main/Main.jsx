@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
 import { format } from "date-fns";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import { DEFAULT_PRODUCT_IMAGE, STORE_NAME } from "../constants/constants";
+import DiscountModal from "./DiscountDialog";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -23,10 +24,7 @@ import {
   Typography,
   Empty,
   message,
-  Modal,
   Form,
-  Radio,
-  InputNumber,
 } from "antd";
 
 const { Title, Text } = Typography;
@@ -52,38 +50,6 @@ const Main = () => {
     dispatch(posAction());
   }, [dispatch]);
 
-  const calculateSummary = useCallback(
-    (
-      discountType = summary.discountType,
-      discountAmount = summary.discountAmount
-    ) => {
-      const subtotal = cartItems.reduce(
-        (acc, item) => acc + item.qty * item.product_price,
-        0
-      );
-
-      let discount = 0;
-      if (discountType === "percentage") {
-        discount = (subtotal * discountAmount) / 100;
-      } else {
-        discount = discountAmount;
-      }
-
-      discount = Math.min(discount, subtotal);
-
-      const grandtotal = subtotal - discount;
-      setSummary({
-        ...summary,
-        subtotal,
-        discount,
-        discountType,
-        discountAmount,
-        grandtotal,
-      });
-    },
-    [cartItems, summary]
-  );
-
   useEffect(() => {
     if (cartItems.length > 0) {
       calculateSummary();
@@ -98,7 +64,36 @@ const Main = () => {
         note: "",
       });
     }
-  }, [cartItems, calculateSummary]); // Updated dependency array to include cartItems and calculateSummary
+  }, [cartItems]); // Updated dependency array to include cartItems
+
+  const calculateSummary = (
+    discountType = summary.discountType,
+    discountAmount = summary.discountAmount
+  ) => {
+    const subtotal = cartItems.reduce(
+      (acc, item) => acc + item.qty * item.product_price,
+      0
+    );
+
+    let discount = 0;
+    if (discountType === "percentage") {
+      discount = (subtotal * discountAmount) / 100;
+    } else {
+      discount = discountAmount;
+    }
+
+    discount = Math.min(discount, subtotal);
+
+    const grandtotal = subtotal - discount;
+    setSummary({
+      ...summary,
+      subtotal,
+      discount,
+      discountType,
+      discountAmount,
+      grandtotal,
+    });
+  };
 
   const handleDiscountSubmit = (values) => {
     const { discountType, discountAmount } = values;
@@ -154,69 +149,6 @@ const Main = () => {
 
   const filteredProducts = products?.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const DiscountModal = () => (
-    <Modal
-      title="Apply Discount"
-      open={isDiscountModalVisible}
-      onCancel={() => setIsDiscountModalVisible(false)}
-      footer={null}
-    >
-      <Form
-        form={discountForm}
-        onFinish={handleDiscountSubmit}
-        initialValues={{
-          discountType: "fixed",
-          discountAmount: 0,
-        }}
-        layout="vertical"
-      >
-        <Form.Item name="discountType" label="Discount Type">
-          <Radio.Group>
-            <Radio value="fixed">Fixed Amount ($)</Radio>
-            <Radio value="percentage">Percentage (%)</Radio>
-          </Radio.Group>
-        </Form.Item>
-
-        <Form.Item
-          name="discountAmount"
-          label="Discount Amount"
-          rules={[
-            { required: true, message: "Please enter discount amount" },
-            { type: "number", min: 0, message: "Amount must be positive" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (
-                  getFieldValue("discountType") === "percentage" &&
-                  value > 100
-                ) {
-                  return Promise.reject("Percentage cannot exceed 100%");
-                }
-                return Promise.resolve();
-              },
-            }),
-          ]}
-        >
-          <InputNumber
-            style={{ width: "100%" }}
-            placeholder="Enter discount amount"
-            precision={2}
-          />
-        </Form.Item>
-
-        <Form.Item className="flex justify-end mb-0">
-          <Space>
-            <Button onClick={() => setIsDiscountModalVisible(false)}>
-              Cancel
-            </Button>
-            <Button type="primary" htmlType="submit">
-              Apply Discount
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-    </Modal>
   );
 
   return (
@@ -294,7 +226,7 @@ const Main = () => {
                 placeholder="Search products..."
                 prefix={<SearchOutlined />}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-md "
+                className="max-w-md"
               />
               <Space>
                 <Text>User: Sujan</Text>
@@ -327,7 +259,10 @@ const Main = () => {
           </div>
         </div>
 
-        <DiscountModal />
+        <DiscountModal
+          isDiscountModalVisible={isDiscountModalVisible}
+          handleDiscountSubmit={handleDiscountSubmit}
+        />
       </div>
     </div>
   );
