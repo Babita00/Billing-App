@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { posAction } from "../actions/posActions";
+import { saveOrder } from "../actions/posActions";
 import { format } from "date-fns";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
@@ -26,6 +27,7 @@ import {
   message,
   Form,
 } from "antd";
+import NoteModal from "./NoteModal";
 
 const { Title, Text } = Typography;
 
@@ -34,6 +36,7 @@ const Main = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDiscountModalVisible, setIsDiscountModalVisible] = useState(false);
   const [discountForm] = Form.useForm();
+  const [isNoteModalVisible, setIsNoteModalVisible] = useState(false);
   const [summary, setSummary] = useState({
     subtotal: 0,
     discount: 0,
@@ -49,6 +52,8 @@ const Main = () => {
   useEffect(() => {
     dispatch(posAction());
   }, [dispatch]);
+
+  
 
   useEffect(() => {
     if (cartItems.length > 0) {
@@ -151,6 +156,36 @@ const Main = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleNoteSubmit = (note) => {
+    setSummary((prev) => ({
+      ...prev,
+      note,
+    }));
+    setIsNoteModalVisible(false);
+    message.success("Note added successfully");
+  };
+
+  const payNow = () => {
+    const request = {
+      customer: "walkin",
+      subtotal: summary.subtotal,
+      discount: summary.discount,
+      grandtotal: summary.grandtotal,
+      note: summary.note,
+      type: "Cash by Sujan",
+      products: cartItems.map((cart) => {
+        return {
+          name: cart.name,
+          qty: cart.qty,
+          price: cart.product_price,
+          total: cart.qty * cart.product_price,
+          code: cart.product_code,
+        };
+      }),
+    };
+    saveOrder(request);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
@@ -170,7 +205,11 @@ const Main = () => {
               <Button icon={<UserOutlined />} block>
                 Customer
               </Button>
-              <Button icon={<FileTextOutlined />} block>
+              <Button
+                icon={<FileTextOutlined />}
+                block
+                onClick={() => setIsNoteModalVisible(true)}
+              >
                 Note
               </Button>
               <Button
@@ -197,6 +236,18 @@ const Main = () => {
             </div>
 
             <Divider />
+
+            {summary.note && (
+              <div className="mb-4">
+                <Divider />
+                <div className="flex justify-between items-start">
+                  <Text strong>Note:</Text>
+                  <div className="text-right max-w-[200px]">
+                    <Text>{summary.note}</Text>
+                  </div>
+                </div>
+              </div>
+            )}
             <CartSummary summary={summary} />
 
             <Space className="w-full">
@@ -208,7 +259,12 @@ const Main = () => {
               >
                 Reset Cart
               </Button>
-              <Button type="primary" icon={<ShoppingCartOutlined />} block>
+              <Button
+                type="primary"
+                icon={<ShoppingCartOutlined />}
+                block
+                onClick={payNow}
+              >
                 Pay Now
               </Button>
             </Space>
@@ -264,6 +320,13 @@ const Main = () => {
           handleDiscountSubmit={handleDiscountSubmit}
           discountForm={discountForm}
           onCancel={() => setIsDiscountModalVisible(false)}
+        />
+
+        <NoteModal
+          isVisible={isNoteModalVisible}
+          onCancel={() => setIsNoteModalVisible(false)}
+          onSubmit={handleNoteSubmit}
+          initialValue={summary.note}
         />
       </div>
     </div>
